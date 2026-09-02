@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Board</title>
+</head>
+
+<body
+  style='background:black;background-image:url("gpx/bg.png");background-size:cover;width: 1920px;height: 1080px;overflow: hidden;'>
+  <style>
+    @font-face {
+      font-family: 'ChronicaPro-Bold';
+      src: url('gpx/ChronicaPro-Bold.ttf')
+    }
+
+    .finaleTile,
+    .tile {
+      position: relative;
+      width: 85px;
+      height: 85px;
+      scale: 1;
+    }
+
+    .tile img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .tileText {
+      position: absolute;
+      font-family: 'ChronicaPro-Bold';
+      font-size: 45pt;
+      width: 100%;
+      text-align: center;
+      left: 0;
+    }
+
+    .numTile {
+      font-size: 45pt;
+      font-family: 'ChronicaPro-Bold';
+      text-align: center;
+      color: white;
+      background-image: url(gpx/number.png);
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+
+    .finaleTile .blue {
+      color: #061483;
+    }
+
+    #p1Name,
+    #p2Name,
+    #p3Name,
+    #p1Score,
+    #p2Score,
+    #p3Score {
+      position: absolute;
+      font-family: 'ChronicaPro-Bold';
+
+    }
+
+    #p1Name,
+    #p2Name,
+    #p3Name {
+      font-size: 40pt;
+      width: 600px;
+      text-align: center;
+      color: white;
+      left: 0;
+    }
+
+    #p1Score,
+    #p2Score,
+    #p3Score {
+      left: 600px;
+      width: 140px;
+      font-size: 55pt;
+      text-align: center;
+      color: #061483;
+    }
+  </style>
+  <div id='crosswordGrid'
+    style='display:grid; grid-template-columns:repeat(12, 85px); grid-template-rows:repeat(12, 85px); gap:3px;'>
+  </div>
+  <div id='scoreboard' style='position:absolute;left: 1100px;top: 20px;'>
+    <img src='gpx/scoreBarWeb.png'>
+    <img src='gpx/scoreBarWeb.png'>
+    <img src='gpx/scoreBarWeb.png'>
+    <span id='p1Name' style='top:20px;'>NC1</span>
+    <span id='p2Name' style='top:135px'>NC2</span>
+    <span id='p3Name' style='top:245px'>NC3</span>
+    <span id='p1Score' style='top:0;'>0</span>
+    <span id='p2Score' style='top:110px'>0</span>
+    <span id='p3Score' style='top:225px'>0</span>
+  </div>
+  <div id='finaleLettersArea' style='display:none;position:absolute;left: 1140px;
+    top: 420px;grid-auto-flow:column'>
+    <div class='finaleTile'>
+      <img src='gpx/letterRevealed.png'>
+      <span class='tileText blue'>1</span>
+    </div>
+    <div class='finaleTile'>
+      <img src='gpx/letterRevealed.png'>
+      <span class='tileText blue'>2</span>
+    </div>
+    <div class='finaleTile'>
+      <img src='gpx/letterRevealed.png'>
+      <span class='tileText blue'>3</span>
+    </div>
+    <div class='finaleTile'>
+      <img src='gpx/letterRevealed.png'>
+      <span class='tileText blue'>4</span>
+    </div>
+    <div class='finaleTile'>
+      <img src='gpx/letterRevealed.png'>
+      <span class='tileText blue'>5</span>
+    </div>
+    <div class='finaleTile'>
+      <img src='gpx/letterRevealed.png'>
+      <span class='tileText blue'>6</span>
+    </div>
+    <div class='finaleTile'>
+      <img src='gpx/letterRevealed.png'>
+      <span class='tileText blue'>7</span>
+    </div>
+    <div class='finaleTile'>
+      <img src='gpx/letterRevealed.png'>
+      <span class='tileText blue'>8</span>
+    </div>
+  </div>
+  <div id='timerArea' style='display:none;position:absolute;left: 1340px;
+    top: 420px;'>
+    <img src='gpx/timer.png'>
+    <div id='timer'
+      style='position: absolute;top: 0;width: 100%;font-size: 50pt;text-align: center;font-family: ChronicaPro-Bold;color: white;box-sizing: border-box;'>
+    </div>
+  </div>
+  <div id='qnaArea' style='position:absolute;left: 1100px;top: 560px;'>
+    <img src='gpx/qnaBarWeb.png'>
+    <div id='question'
+      style='position: absolute;top: 0;width: 100%;font-size: 30pt;text-align: center;font-family: ChronicaPro-Bold;color: #061483;padding: 10px;box-sizing: border-box;'>
+    </div>
+    <div id='answer'
+      style='position: absolute;top: 423px;width: 12%;font-size: 40pt;text-align: center;font-family: ChronicaPro-Bold;color: white;'>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+    integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/4.0.0/jquery.min.js"
+    integrity="sha512-8LENNbXmzI/Gbj+OwXmqR6V4QaUAw0/porPzy1+dQoJqC0JPHedWoe0DDOTL2uHA5XXJyIsPtiMHH86pVlay6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"
+    integrity="sha512-xi/RZRIF/S0hJ+yJJYuZ5yk6/8pCiRlEXZzoguSMl+vk2i3m6UjUO/WcZ11blRL/O+rnj94JRGwt/CHbc9+6EA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const s = io();
+    let vol = .2
+    let repeatedSounds = ['../sounds/toss up 1.mp3', '../sounds/toss up 2.mp3', '../sounds/toss up 3.mp3', '../sounds/nhac sieu toc.mp3', '../sounds/nhacmoptobm.mp3', '../sounds/speed up.mp3', '../sounds/3c1v.mp3']
+    function playSound(url) {
+      const sound = new Howl({
+        src: ['sound/' + url + '.mp3'],
+        volume: vol,
+        loop: repeatedSounds.includes(url) ? true : false
+      });
+      sounds.push(sound)
+      sound.play();
+    }
+    function stopAllSounds() {
+      for (let sound of sounds) {
+        sound.stop()
+      }
+      sounds = []
+    }
+    let sounds = []
+    s.on('sound', sound => {
+      playSound(sound)
+    })
+    s.on('stopAllSounds', () => {
+      stopAllSounds()
+    })
+    function changeState(tileCoordinate, state, letter) {
+      const tile = $(`#crosswordGrid > .tile`).eq(tileCoordinate);
+      if (state == 'toAddPoint') {
+        /*tile.animate({ scale: 0 }, 125, 'linear', () => {
+          tile.find('img').attr('src', `gpx/letterToAddPoint.png`);
+          tile.find('.tileText').text(letter);
+          tile.find('.tileText').css('color', 'white');
+          tile.animate({ scale: 1 }, 125, 'linear', () => {
+            setTimeout(() => {
+              tile.animate({ scale: 0 }, 125, 'linear', () => {
+                tile.find('img').attr('src', `gpx/letterRevealed.png`);
+                tile.find('.tileText').css('color', '#061483');
+                tile.find('.tileText').text(letter);
+                tile.animate({ scale: 1 }, 125, 'linear');
+              })
+            }, 3000)
+          })
+        })*/
+        tile.find('img').attr('src', `gpx/letterToAddPoint.png`);
+        tile.find('.tileText').text(letter);
+        tile.find('.tileText').css('color', 'white');
+        setTimeout(() => {
+          tile.find('img').attr('src', `gpx/letterRevealed.png`);
+          tile.find('.tileText').css('color', '#061483');
+          tile.find('.tileText').text(letter);
+        }, 3000)
+      }
+      else {
+        /*tile.animate({ scale: 0 }, 125, 'linear', () => {
+          tile.find('img').attr('src', `gpx/letter${state}.png`);
+          tile.find('.tileText').text(letter);
+          tile.find('.tileText').css('color', '#061483');
+          tile.animate({ scale: 1 }, 125);
+        })*/
+        tile.find('img').attr('src', `gpx/letter${state}.png`);
+        tile.find('.tileText').text(letter);
+        tile.find('.tileText').css('color', '#061483');
+      }
+    }
+
+    function generateCrosswordGrid(crossword) {
+      const tile = $(`<div class='tile'>
+        <img src='gpx/letterUnopened.png'>
+        <span class='tileText'></span>
+      </div>`);
+      const emptyTile = $(`<div class='tile'></div>`)
+      const numberTile = $(`<div class='tile numTile'></div>`)
+      $('#crosswordGrid').empty();
+      for (let i = 0; i < crossword.length; i++) {
+        if (typeof crossword[i] === 'string') {
+          $('#crosswordGrid').append(tile.clone());
+        } else if (crossword[i] === null) {
+          $('#crosswordGrid').append(emptyTile.clone());
+        } else if (typeof crossword[i] === 'number') {
+          $('#crosswordGrid').append(numberTile.clone().text(crossword[i]));
+        }
+      }
+    }
+    function resetCrossword() {
+      console.log('resetting crossword')
+      $('#crosswordGrid').empty();
+    }
+
+    function revealTile(tileCoordinate, letter) {
+      playSound('show letter in crossword')
+      changeState(tileCoordinate, 'Revealed', letter);
+    }
+    function revealWord(tileCoordinate, letter) {
+      playSound('show letter in crossword')
+      changeState(tileCoordinate, 'toAddPoint', letter);
+    }
+
+    function playerBuzz(player) {
+      $(`#scoreboard img:nth-child(${player})`).attr('src', 'gpx/scoreBarWebBuzzed.png');
+      playSound('buzzer', vol)
+    }
+    let slamInterval;
+    function playerSlam(player) {
+      slamInterval = setInterval(() => {
+        $(`#scoreboard img:nth-child(${player})`).attr('src', 'gpx/scoreBarWebBuzzed.png');
+        setTimeout(() => {
+          $(`#scoreboard img:nth-child(${player})`).attr('src', 'gpx/scoreBarWeb.png');
+        }, 500)
+      }, 1000)
+      playSound('slam', vol)
+    }
+    function resetSlam() {
+      clearInterval(slamInterval)
+      $(`#scoreboard img`).attr('src', 'gpx/scoreBarWeb.png');
+    }
+    s.on('slamsReset', () => {
+      resetSlam()
+    })
+    s.on('slamsClose', () => {
+      resetSlam()
+    })
+
+
+    function resetBuzz(player) {
+      $(`#scoreboard img:nth-child(${player})`).attr('src', 'gpx/scoreBarWeb.png');
+    }
+    s.on('buzzed', player => playerBuzz(player))
+    function update(player, name, score) {
+      if (name) $(`#p${player}Name`).text(name);
+      if (score) $(`#p${player}Score`).text(score);
+    }
+    s.on('buzzersReset', () => {
+      resetBuzz(1)
+      resetBuzz(2)
+      resetBuzz(3)
+    })
+    s.on('buzzersClose', () => {
+      resetBuzz(1)
+      resetBuzz(2)
+      resetBuzz(3)
+    })
+    function showQuestion(question) {
+      $('#question').text(question)
+    }
+    function showAnswer(answer) {
+      $('#answer').text(answer)
+    }
+    function ansWrong() {
+      $('#answer').text('X')
+    }
+
+    s.on('generateCrosswordGrid', (grid, coords, clues, qnas) => {
+      generateCrosswordGrid(grid);
+    });
+    s.on('showQuestion', question => showQuestion(question))
+    s.on('showAnswer', answer => showAnswer(answer))
+    s.on('ansWrong', () => ansWrong())
+    s.on('resetCrossword', () => resetCrossword())
+    s.on('revealWord', (indexesAndLettersToOpen, isFinal) => {
+      if (!isFinal) {
+        let interval
+        let i = 0
+        interval = setInterval(() => {
+          if (i < indexesAndLettersToOpen.length) {
+            revealWord(indexesAndLettersToOpen[i].index, indexesAndLettersToOpen[i].letter);
+            i++;
+          }
+          else {
+            clearInterval(interval)
+          }
+        }, 125)
+      }
+      else {
+        indexesAndLettersToOpen.forEach((item, i) => {
+          revealWord(indexesAndLettersToOpen[i].index, indexesAndLettersToOpen[i].letter);
+        })
+      }
+    });
+    s.on('revealTile', (indexesAndLettersToOpen, isFinal) => {
+      let interval
+      let i = 0
+      interval = setInterval(() => {
+        if (i < indexesAndLettersToOpen.length) {
+          revealTile(indexesAndLettersToOpen[i].index, indexesAndLettersToOpen[i].letter);
+          i++;
+        }
+        else {
+          if (!isFinal) {
+            playSound('show row column can fill')
+            setTimeout(() => {
+              playSound('in crossword bed')
+            }, 200)
+          }
+          clearInterval(interval)
+        }
+      }, 125)
+    })
+    s.on('highlightWord', (wordCoordinates) => {
+      $('.tile').css('opacity', .2);
+      wordCoordinates.forEach((index) => {
+        $(`#crosswordGrid > .tile`).eq(index).css('opacity', 1);
+      });
+    });
+    s.on('unhighlightWord', () => {
+      $('.tile').css('opacity', 1);
+    });
+    s.on('highlightNumber', (numbers) => {
+      $(`.numTile`).css('opacity', .2);
+      $(`#crosswordGrid > .numTile`).each((i, tile) => {
+        numbers.forEach((number) => {
+          if ($(tile).text() == number) {
+            $(tile).css('opacity', 1);
+          }
+        });
+      });
+    });
+
+    let timerInterval;
+    s.on('timer60s', () => {
+      $('#finaleLettersArea').css('display', 'none')
+      $('#timerArea').css('display', 'block')
+      let timeLeft = 60;
+      $('#timer').text(timeLeft);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        $('#timer').text(timeLeft);
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+        }
+      }, 1000);
+    })
+    s.on('stopTimer', () => {
+      clearInterval(timerInterval);
+    })
+    s.on('showFinaleLetters', () => {
+      $('#finaleLettersArea').css('display', 'grid')
+      $('#timerArea').css('display', 'none')
+    })
+    s.on('revealFinaleLetter', (letterNum, letter) => {
+      $('#finaleLettersArea > .finaleTile').eq(letterNum - 1).find('.tileText').text(letter);
+    })
+    s.on('updateScoreboard', (data) => {
+      console.log('updateScoreboard', data)
+      $('#p1Score').text(data.scores[0])
+      $('#p2Score').text(data.scores[1])
+      $('#p3Score').text(data.scores[2])
+      $('#p1Name').text(data.names[0])
+      $('#p2Name').text(data.names[1])
+      $('#p3Name').text(data.names[2])
+    })
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player Access</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: black;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: bold;
+    }
+
+    select,
+    input {
+      padding: 12px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    select:focus,
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: gray;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #6e6e6e;
+    }
+
+    .message {
+      padding: 5px;
+      border-radius: 5px;
+      text-align: center;
+      display: none;
+      font-weight: bold;
+    }
+
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      display: block;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div style='display:flex;'>
+      <div class="form-group" style='flex:2;'>
+        <select id="playerSelect">
+          <option value="">Người chơi</option>
+          <option value="p1">1</option>
+          <option value="p2">2</option>
+          <option value="p3">3</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <input type="password" id="passwordInput" placeholder="Mật khẩu">
+      </div>
+      <button onclick="submitPassword()">Đăng nhập</button>
+    </div>
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    async function submitPassword() {
+      const page = document.getElementById('playerSelect').value;
+      const password = document.getElementById('passwordInput').value;
+      if (!page || !password) {
+        showMessage('Bạn chưa chọn người chơi hoặc chưa nhập mật khẩu.', 'error');
+        return;
+      }
+      try {
+        //receive data (token) from server to validate password
+        const response = await fetch('/api/validate-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ page, password }) });
+        const authData = await response.json();
+        if (!response.ok) {
+          showMessage('Sai mật khẩu.', 'error');
+          return;
+        }
+        //server runs the GET request to return
+        window.location.replace(`/pages/${page}.html?token=${authData.token}`);
+      }
+      catch (error) {
+        showMessage('Lỗi xác thực mật khẩu.', 'error');
+      }
+    }
+
+    function showMessage(text, type) {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = `message ${type}`;
+      setTimeout(() => { msg.className = 'message'; }, 5000);
+    }
+
+    document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') submitPassword();
+    });
+  </script>
+</body>
+
+</html>

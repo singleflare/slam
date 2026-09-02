@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Điều khiển</title>
+</head>
+
+<body style='background: black;'>
+  <style>
+    * {
+      color: white
+    }
+
+    button {
+      border: 1px solid white;
+      background: black;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid white;
+    }
+
+    .flexContainer {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      border: 1px solid white;
+      background: black;
+      color: white;
+    }
+  </style>
+  <div>
+    <input type="file" id="fileInput" accept=".xlsx">
+    <button onclick="r1()">Vòng 1</button>
+    <button onclick="r2()">Vòng 2</button>
+    <button onclick="rFinal()">Vòng CK</button>
+    <button onclick="resetCrossword()">Reset</button>
+  </div>
+  <div style='width:100%'>
+    <div id='letterQna'>
+      <div id='letterQuestion'
+        style='display:flex;text-align:center;height: 100px;align-items: center;justify-content: center;'>Câu
+        hỏi ở đây
+      </div>
+      <div class='flexContainer'>
+        <div id='letterAnswer'>-</div>
+        <div id='letterExplanation'>-</div>
+        <div id='letterCount'>-</div>
+      </div>
+      <button onClick='previewPrevLetterQuestion()'>CH chữ trước</button>
+      <button onClick='previewNextLetterQuestion()'>CH chữ sau</button>
+      <button onClick='showLetterQuestion()'>Hiện CH</button>
+      <button onClick="letterQuestionAnsCorrect()">Đúng</button>
+      <button onClick="letterQuestionAnsWrong()">Sai</button>
+      <button onClick="revealSpecificLetterInCrossword()">Hiện chữ cái trong ô chữ</button>
+      <button onClick="s.emit('timer60s')">60s</button>
+    </div>
+    <div id='wordList' style='display:grid;grid-template-columns: 10% 70% 10% 10%;grid-template-rows: repeat(10, 1fr);'>
+      <button onClick="highlightWord(1)">1</button>
+      <button onClick="showWordDef(1)"></button>
+      <button onClick="revealWord(1)">Đ</button>
+      <button onClick="hideWord(1)">S</button>
+      <button onClick="highlightWord(2)">2</button>
+      <button onClick="showWordDef(2)"></button>
+      <button onClick="revealWord(2)">Đ</button>
+      <button onClick="hideWord(2)">S</button>
+      <button onClick="highlightWord(3)">3</button>
+      <button onClick="showWordDef(3)"></button>
+      <button onClick="revealWord(3)">Đ</button>
+      <button onClick="hideWord(3)">S</button>
+      <button onClick="highlightWord(4)">4</button>
+      <button onClick="showWordDef(4)"></button>
+      <button onClick="revealWord(4)">Đ</button>
+      <button onClick="hideWord(4)">S</button>
+      <button onClick="highlightWord(5)">5</button>
+      <button onClick="showWordDef(5)"></button>
+      <button onClick="revealWord(5)">Đ</button>
+      <button onClick="hideWord(5)">S</button>
+      <button onClick="highlightWord(6)">6</button>
+      <button onClick="showWordDef(6)"></button>
+      <button onClick="revealWord(6)">Đ</button>
+      <button onClick="hideWord(6)">S</button>
+      <button onClick="highlightWord(7)">7</button>
+      <button onClick="showWordDef(7)"></button>
+      <button onClick="revealWord(7)">Đ</button>
+      <button onClick="hideWord(7)">S</button>
+      <button onClick="highlightWord(8)">8</button>
+      <button onClick="showWordDef(8)"></button>
+      <button onClick="revealWord(8)">Đ</button>
+      <button onClick="hideWord(8)">S</button>
+      <button onClick="highlightWord(9)">9</button>
+      <button onClick="showWordDef(9)"></button>
+      <button onClick="revealWord(9)">Đ</button>
+      <button onClick="hideWord(9)">S</button>
+      <button onClick="highlightWord(10)">10</button>
+      <button onClick="showWordDef(10)"></button>
+      <button onClick="revealWord(10)">Đ</button>
+      <button onClick="hideWord(10)">S</button>
+    </div>
+    <div id='finaleWordList'
+      style='display:none;grid-template-columns: repeat(3, 1fr);grid-template-rows: repeat(8, 1fr);'>
+      <button onClick="highlightWord(1)">1</button>
+      <button onClick="revealFinalWord(1)">Đ</button>
+      <button onClick="hideWord(1)">S</button>
+      <button onClick="highlightWord(2)">2</button>
+      <button onClick="revealFinalWord(2)">Đ</button>
+      <button onClick="hideWord(2)">S</button>
+      <button onClick="highlightWord(3)">3</button>
+      <button onClick="revealFinalWord(3)">Đ</button>
+      <button onClick="hideWord(3)">S</button>
+      <button onClick="highlightWord(4)">4</button>
+      <button onClick="revealFinalWord(4)">Đ</button>
+      <button onClick="hideWord(4)">S</button>
+      <button onClick="highlightWord(5)">5</button>
+      <button onClick="revealFinalWord(5)">Đ</button>
+      <button onClick="hideWord(5)">S</button>
+      <button onClick="highlightWord(6)">6</button>
+      <button onClick="revealFinalWord(6)">Đ</button>
+      <button onClick="hideWord(6)">S</button>
+      <button onClick="highlightWord(7)">7</button>
+      <button onClick="revealFinalWord(7)">Đ</button>
+      <button onClick="hideWord(7)">S</button>
+      <button onClick="highlightWord(8)">8</button>
+      <button onClick="revealFinalWord(8)">Đ</button>
+      <button onClick="hideWord(8)">S</button>
+    </div>
+    <div id='finaleLetterList' style='display:none;grid-auto-flow:column;'>
+      <button onClick="chooseFinaleLetter(1)">1.</button>
+      <button onClick="chooseFinaleLetter(2)">2.</button>
+      <button onClick="chooseFinaleLetter(3)">3.</button>
+      <button onClick="chooseFinaleLetter(4)">4.</button>
+      <button onClick="chooseFinaleLetter(5)">5.</button>
+      <button onClick="chooseFinaleLetter(6)">6.</button>
+      <button onClick="chooseFinaleLetter(7)">7.</button>
+      <button onClick="chooseFinaleLetter(8)">8.</button>
+    </div>
+  </div>
+  <div>
+    <button onclick="s.emit('sound','intro')">Intro</button>
+    <button onclick="s.emit('sound','talk bed')">Nền trò chuyện</button>
+    <button onclick="s.emit('sound','round intro')">Intro vòng 1&2</button>
+    <button onclick="s.emit('sound','finale intro')">Intro vòng CK</button>
+    <button onclick="s.emit('stopAllSounds')">Dừng tất cả âm thanh</button>
+    <button onclick="s.emit('logoutAllPlayerWebs')">Đăng xuất tất cả người chơi</button>
+  </div>
+  <div>
+    <input type='text' id='p1NameInput' placeholder='Tên NC1' onchange="updateScoreboard()">
+    <input type='number' id='p1ScoreInput' placeholder='Điểm NC1' onchange="updateScoreboard()">
+    <br>
+    <input type='text' id='p2NameInput' placeholder='Tên NC2' onchange="updateScoreboard()">
+    <input type='number' id='p2ScoreInput' placeholder='Điểm NC2' onchange="updateScoreboard()">
+    <br>
+    <input type='text' id='p3NameInput' placeholder='Tên NC3' onchange="updateScoreboard()">
+    <input type='number' id='p3ScoreInput' placeholder='Điểm NC3' onchange="updateScoreboard()">
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+    integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/4.0.0/jquery.min.js"
+    integrity="sha512-8LENNbXmzI/Gbj+OwXmqR6V4QaUAw0/porPzy1+dQoJqC0JPHedWoe0DDOTL2uHA5XXJyIsPtiMHH86pVlay6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const s = io();
+    let crosswordGrids = [[], [], []], wordCoordinates = [[], [], []], crosswordGridState = [], letterQnas = [[], [], []], crosswordClues = [[], [], []], finaleLetters = [], finaleCategory//0:empty,1:unopened,2:revealed,3:number
+    let currentRoundIndex, currentLetterQnaIndex = 0
+    let alphabet = 'A Ă Â B C D Đ E Ê G H I K L M N O Ô Ơ P Q R S T U Ư V X Y'.split(' ')
+
+    function shuffle(array) {
+      let currentIndex = array.length;
+
+      // While there remain elements to shuffle...
+      while (currentIndex != 0) {
+
+        // Pick a remaining element...
+        let randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+          array[randomIndex], array[currentIndex]];
+      }
+    }
+
+    // Helper function to safely get cell 
+    const getCellValue = (sheet, col, row) => {
+      const cell = sheet[XLSX.utils.encode_cell({ c: col, r: row })]
+      return cell ? cell.v : null
+    }
+    $('#fileInput').on('change', async (e) => {
+      const file = e.target.files[0]
+      const data = await file.arrayBuffer()
+      const workbook = XLSX.read(data)
+      for (let sheetNum = 0; sheetNum <= 2; sheetNum++) {
+        let sheet = workbook.Sheets[workbook.SheetNames[sheetNum]]
+        for (let row = 0; row <= 11; row++) {
+          for (let col = 0; col <= 11; col++) {
+            crosswordGrids[sheetNum].push(getCellValue(sheet, col, row))
+          }
+        }
+        for (let i = 0; i <= crosswordGrids[sheetNum].length; i++) {
+          if (typeof (crosswordGrids[sheetNum][i]) === 'number') {
+            let wordCoordinate = []
+            if (typeof crosswordGrids[sheetNum][i + 1] === 'string') {
+              //horizontal word
+              let j = i + 1
+              while (typeof crosswordGrids[sheetNum][j] === 'string') {
+                wordCoordinate.push(j)
+                j++
+              }
+              wordCoordinates[sheetNum].push(wordCoordinate)
+            }
+            else if (typeof crosswordGrids[sheetNum][i + 12] === 'string') {
+              //vertical word
+              let j = i + 12
+              while (typeof crosswordGrids[sheetNum][j] === 'string') {
+                wordCoordinate.push(j)
+                j += 12
+              }
+              wordCoordinates[sheetNum].push(wordCoordinate)
+            }
+          }
+        }
+        for (let r = 1; r <= 29; r++) {
+          if (getCellValue(sheet, 14, r) > 0) letterQnas[sheetNum].push({ letter: getCellValue(sheet, 13, r), numOfLetters: getCellValue(sheet, 14, r), question: getCellValue(sheet, 15, r), explanation: getCellValue(sheet, 16, r) })
+          if (r <= 10) crosswordClues[sheetNum].push(getCellValue(sheet, 18, r))
+          if (r <= 8 && sheetNum == 2) finaleLetters.push(getCellValue(sheet, 18, r))
+        }
+        if (sheetNum == 2) finaleCategory = getCellValue(sheet, 1, 12)
+      }
+      console.log(crosswordGrids, letterQnas, crosswordClues, finaleLetters, wordCoordinates, finaleCategory)
+    })
+
+    function previewPrevLetterQuestion() {
+      s.emit('showQuestion', '')
+      s.emit('showAnswer', '')
+      s.emit('closeSlam')
+      if (currentLetterQnaIndex > 0) {
+        currentLetterQnaIndex--
+        $('#letterQuestion').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].question)
+        $('#letterCount').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].numOfLetters)
+        $('#letterExplanation').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].explanation)
+        $('#letterAnswer').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].letter)
+        s.emit('checkRemainingLetterCount', letterQnas[currentRoundIndex][currentLetterQnaIndex].letter)
+      }
+    }
+    function previewNextLetterQuestion() {
+      s.emit('showQuestion', '')
+      s.emit('showAnswer', '')
+      s.emit('closeSlam')
+      if (currentLetterQnaIndex < letterQnas[currentRoundIndex].length - 1) {
+        currentLetterQnaIndex++
+        $('#letterQuestion').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].question)
+        $('#letterCount').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].numOfLetters)
+        $('#letterExplanation').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].explanation)
+        $('#letterAnswer').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].letter)
+        s.emit('checkRemainingLetterCount', letterQnas[currentRoundIndex][currentLetterQnaIndex].letter)
+      }
+    }
+    function showLetterQuestion() {
+      s.emit('closeSlam')
+      s.emit('showQuestion', letterQnas[currentRoundIndex][currentLetterQnaIndex].question)
+      s.emit('openBuzzer')
+      s.emit('sound', 'show question')
+    }
+    function highlightWord(wordNum) {
+      s.emit('highlightWord', wordNum)
+      s.emit('sound', 'show question')
+    }
+    function showWordDef(wordNum) {
+      s.emit('showQuestion', crosswordClues[currentRoundIndex][wordNum - 1])
+      s.emit('stopAllSounds')
+      s.emit('sound', 'timer 10s')
+    }
+    function revealWord(wordNum) {
+      s.emit('revealWord', wordNum)
+      s.emit('openSlam')
+      s.emit('stopAllSounds')
+      s.emit('sound', 'show letter in crossword')
+      s.emit('sound', 'correct')
+      setTimeout(() => {
+        s.emit('unhighlightWord')
+      }, 1000)
+    }
+    function revealFinalWord(wordNum) {
+      s.emit('revealWord', wordNum, true)
+      s.emit('unhighlightWord')
+    }
+    function hideWord(wordNum) {
+      s.emit('hideWord', wordNum)
+      s.emit('openSlam')
+      s.emit('sound', 'time up 10s')
+      s.emit('showQuestion', '')
+      s.emit('unhighlightWord')
+    }
+    function resetCrossword() {
+      s.emit('resetCrossword')
+    }
+    function letterQuestionAnsCorrect() {
+      s.emit('showAnswer', letterQnas[currentRoundIndex][currentLetterQnaIndex].letter)
+      s.emit('sound', 'correct')
+      s.emit('closeBuzzer')
+    }
+    function letterQuestionAnsWrong() {
+      s.emit('resetBuzzers')
+      s.emit('sound', 'wrong')
+    }
+    function revealSpecificLetterInCrossword() {
+      s.emit('revealSpecificLetterInCrossword', letterQnas[currentRoundIndex][currentLetterQnaIndex].letter, false)
+      s.emit('showQuestion', '')
+      s.emit('showAnswer', '')
+    }
+
+    function r1() {
+      $('#wordList').css('display', 'grid')
+      $('#finaleWordList').css('display', 'none')
+      s.emit('sound', 'reveal crossword')
+      s.emit('generateCrosswordGrid', crosswordGrids[0], wordCoordinates[0], crosswordClues[0], letterQnas[0])
+      $('#wordList button:nth-child(4n+2)').each((i, btn) => {
+        $(btn).text(crosswordClues[0][i])
+      })
+      shuffle(letterQnas[0])
+      currentRoundIndex = 0
+      currentLetterQnaIndex = -1
+    }
+    function r2() {
+      $('#wordList').css('display', 'grid')
+      $('#finaleWordList').css('display', 'none')
+      s.emit('sound', 'reveal crossword')
+      s.emit('generateCrosswordGrid', crosswordGrids[1], wordCoordinates[1], crosswordClues[1], letterQnas[1])
+      $('#wordList button:nth-child(4n+2)').each((i, btn) => {
+        $(btn).text(crosswordClues[1][i])
+      })
+      currentRoundIndex = 1
+      currentLetterQnaIndex = -1
+    }
+    function rFinal() {
+      $('#wordList').css('display', 'none')
+      $('#finaleWordList,#finaleLetterList').css('display', 'grid')
+      finaleLetters.forEach((letter, index) => {
+        $('#finaleLetterList button:nth-child(' + (index + 1) + ')').text(`${index + 1}. ${letter}`)
+      })
+      s.emit('sound', 'finale start')
+      s.emit('generateCrosswordGrid', crosswordGrids[2], wordCoordinates[2], crosswordClues[2], letterQnas[2])
+      $('#wordList button:nth-child(4n+2)').each((i, btn) => {
+        $(btn).text(crosswordClues[2][i])
+      })
+      s.emit('showFinaleLetters')
+      s.emit('showQuestion', finaleCategory)
+      currentRoundIndex = 2
+      currentLetterQnaIndex = -1
+    }
+    function chooseFinaleLetter(letterNum) {
+      s.emit('revealSpecificLetterInCrossword', finaleLetters[letterNum - 1], true)
+      s.emit('revealFinaleLetter', letterNum, finaleLetters[letterNum - 1])
+    }
+    function updateScoreboard() {
+      s.emit('updateScoreboard', [$('#p1NameInput').val(), $('#p2NameInput').val(), $('#p3NameInput').val()], [$('#p1ScoreInput').val(), $('#p2ScoreInput').val(), $('#p3ScoreInput').val()])
+    }
+
+    s.on('remainingLetterCount', (count) => {
+      $('#letterCount').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].numOfLetters + '-' + (letterQnas[currentRoundIndex][currentLetterQnaIndex].numOfLetters - count))
+    })
+  </script>
+</body>
+
+</html>

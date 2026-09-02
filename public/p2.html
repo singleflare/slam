@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player 2</title>
+  <style>
+    * {
+      font-size: 20pt
+    }
+
+    p {
+      color: white;
+      text-align: center;
+      margin: 1px;
+    }
+
+    button:hover {
+      background: white !important;
+      color: black !important;
+    }
+
+    button:disabled {
+      background: black !important;
+      color: white !important;
+      opacity: 0.5;
+    }
+
+    button:hover:disabled {
+      background: black !important;
+      color: white !important;
+      opacity: 0.5;
+    }
+
+    iframe {
+      width: 1920px;
+      position: absolute;
+      top: -162px;
+      aspect-ratio: 16 / 9;
+      scale: 0.7;
+      left: -288px;
+      border: none;
+    }
+  </style>
+  <script type="text/javascript">
+    window.history.forward();
+    function noBack() {
+      window.history.forward();
+    }
+  </script>
+</head>
+
+<body style='background:black;overflow: hidden;margin:0;position: absolute;'>
+  <div style='overflow: hidden;background-color: #202020;
+    width: 1345px;
+    position: absolute;
+    height: 757px;'>
+    <iframe src="board.html"></iframe>
+  </div>
+  <div style='width: calc(100vw - 1344px);
+    right: -100vw;
+    position: absolute;
+    height: 347px;'>
+    <button id='buzzer' style='color:white;background:black;border:1px solid white;width: 100%;height: 100%;'
+      disabled>Chuông</button>
+    <button id='slam' disabled
+      style='color:white;background:black;border:1px solid white;width: 100%;height: 118%;'>Slam</button>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-4.0.0.min.js"
+    integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"
+    integrity="sha512-xi/RZRIF/S0hJ+yJJYuZ5yk6/8pCiRlEXZzoguSMl+vk2i3m6UjUO/WcZ11blRL/O+rnj94JRGwt/CHbc9+6EA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    const s = io();
+    s.emit('log', 'NC2 đã kết nối')
+    $('#buzzer').click(() => {
+      $('#buzzer').prop('disabled', true)
+      s.emit('buzz', 2);
+    })
+    $('#slam').click(() => {
+      $('#slam').prop('disabled', true)
+      s.emit('slam', 2);
+    })
+    window.addEventListener('pagehide', () => {
+      s.emit('log', 'NC2 đã ngắt kết nối')
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") {
+        s.emit('log', 'NC2 đã rời khỏi tab')
+      }
+      else if (document.visibilityState === "visible") {
+        s.emit('log', 'NC2 đã quay lại tab')
+      }
+    });
+  </script>
+  <script src='playerGeneral.js'></script>
+  <script src='disableDevTools.js'></script>
+</body>
+
+</html>
