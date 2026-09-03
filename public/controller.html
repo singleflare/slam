@@ -213,7 +213,7 @@
         for (let i = 0; i <= crosswordGrids[sheetNum].length; i++) {
           if (typeof (crosswordGrids[sheetNum][i]) === 'number') {
             let wordCoordinate = []
-            if (typeof crosswordGrids[sheetNum][i + 1] === 'string') {
+            if (typeof crosswordGrids[sheetNum][i + 1] === 'string' && typeof crosswordGrids[sheetNum][i + 2] === 'string') {
               //horizontal word
               let j = i + 1
               while (typeof crosswordGrids[sheetNum][j] === 'string') {

@@ -264,10 +264,11 @@
     }
     let slamInterval;
     function playerSlam(player) {
+      $(`#scoreboard img:nth-child(${player})`).attr('src', 'gpx/scoreBarWebBuzzed.png');
       slamInterval = setInterval(() => {
-        $(`#scoreboard img:nth-child(${player})`).attr('src', 'gpx/scoreBarWebBuzzed.png');
+        $(`#scoreboard img:nth-child(${player})`).attr('src', 'gpx/scoreBarWeb.png');
         setTimeout(() => {
-          $(`#scoreboard img:nth-child(${player})`).attr('src', 'gpx/scoreBarWeb.png');
+          $(`#scoreboard img:nth-child(${player})`).attr('src', 'gpx/scoreBarWebBuzzed.png');
         }, 500)
       }, 1000)
       playSound('slam', vol)
@@ -292,6 +293,7 @@
       if (name) $(`#p${player}Name`).text(name);
       if (score) $(`#p${player}Score`).text(score);
     }
+    s.on('slammed', player => playerSlam(player))
     s.on('buzzersReset', () => {
       resetBuzz(1)
       resetBuzz(2)
