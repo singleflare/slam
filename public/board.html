@@ -92,9 +92,9 @@
     <img src='gpx/scoreBarWeb.png'>
     <img src='gpx/scoreBarWeb.png'>
     <img src='gpx/scoreBarWeb.png'>
-    <span id='p1Name' style='top:20px;'>NC1</span>
-    <span id='p2Name' style='top:135px'>NC2</span>
-    <span id='p3Name' style='top:245px'>NC3</span>
+    <span id='p1Name' style='top:20px;'></span>
+    <span id='p2Name' style='top:135px'></span>
+    <span id='p3Name' style='top:245px'></span>
     <span id='p1Score' style='top:0;'>0</span>
     <span id='p2Score' style='top:110px'>0</span>
     <span id='p3Score' style='top:225px'>0</span>
@@ -163,7 +163,7 @@
   <script>
     const s = io();
     let vol = .2
-    let repeatedSounds = ['../sounds/toss up 1.mp3', '../sounds/toss up 2.mp3', '../sounds/toss up 3.mp3', '../sounds/nhac sieu toc.mp3', '../sounds/nhacmoptobm.mp3', '../sounds/speed up.mp3', '../sounds/3c1v.mp3']
+    let repeatedSounds = []
     function playSound(url) {
       const sound = new Howl({
         src: ['sound/' + url + '.mp3'],
@@ -171,6 +171,10 @@
         loop: repeatedSounds.includes(url) ? true : false
       });
       sounds.push(sound)
+      if (url == 'finale win') {
+        clearInterval(timerInterval)
+        stopAllSounds()
+      }
       sound.play();
     }
     function stopAllSounds() {
@@ -226,11 +230,20 @@
       }
     }
 
-    function generateCrosswordGrid(crossword) {
-      const tile = $(`<div class='tile'>
-        <img src='gpx/letterUnopened.png'>
+    function generateCrosswordGrid(crossword, isFinal) {
+      let tile
+      if (isFinal) {
+        tile = $(`<div class='tile'>
+        <img src='gpx/finaleLetterUnopened.png'>
         <span class='tileText'></span>
       </div>`);
+      }
+      else {
+        tile = $(`<div class='tile'>
+          <img src='gpx/letterUnopened.png'>
+          <span class='tileText'></span>
+        </div>`);
+      }
       const emptyTile = $(`<div class='tile'></div>`)
       const numberTile = $(`<div class='tile numTile'></div>`)
       $('#crosswordGrid').empty();
@@ -256,6 +269,9 @@
     function revealWord(tileCoordinate, letter) {
       playSound('show letter in crossword')
       changeState(tileCoordinate, 'toAddPoint', letter);
+    }
+    function hideWord(tileCoordinate, letter) {
+      changeState(tileCoordinate, 'Missed', letter);
     }
 
     function playerBuzz(player) {
@@ -314,8 +330,14 @@
       $('#answer').text('X')
     }
 
-    s.on('generateCrosswordGrid', (grid, coords, clues, qnas) => {
-      generateCrosswordGrid(grid);
+    s.on('generateCrosswordGrid', (grid, isFinal) => {
+      generateCrosswordGrid(grid, isFinal);
+      if (isFinal) {
+        $('body').css('background-image', 'url("gpx/bgFinale.png")')
+      }
+      else {
+        $('body').css('background-image', 'url("gpx/bg.png")')
+      }
     });
     s.on('showQuestion', question => showQuestion(question))
     s.on('showAnswer', answer => showAnswer(answer))
@@ -340,6 +362,11 @@
           revealWord(indexesAndLettersToOpen[i].index, indexesAndLettersToOpen[i].letter);
         })
       }
+    });
+    s.on('hideWord', (indexesToHide) => {
+      indexesToHide.forEach((item, i) => {
+        hideWord(indexesToHide[i].index);
+      })
     });
     s.on('revealTile', (indexesAndLettersToOpen, isFinal) => {
       let interval
@@ -414,6 +441,7 @@
       $('#p3Name').text(data.names[2])
     })
   </script>
+  <script src='disableDevTools.js'></script>
 </body>
 
 </html>

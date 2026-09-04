@@ -64,6 +64,7 @@
       <button onClick="letterQuestionAnsCorrect()">Đúng</button>
       <button onClick="letterQuestionAnsWrong()">Sai</button>
       <button onClick="revealSpecificLetterInCrossword()">Hiện chữ cái trong ô chữ</button>
+      <button onClick="s.emit('openSlam')">Mở nút Slam</button>
       <button onClick="s.emit('timer60s')">60s</button>
     </div>
     <div id='wordList' style='display:grid;grid-template-columns: 10% 70% 10% 10%;grid-template-rows: repeat(10, 1fr);'>
@@ -152,6 +153,7 @@
     <button onclick="s.emit('sound','round intro')">Intro vòng 1&2</button>
     <button onclick="s.emit('sound','finale intro')">Intro vòng CK</button>
     <button onclick="s.emit('sound','finale win')">Thắng vđb</button>
+    <button onclick="s.emit('sound','slam outro remake')">Outro</button>
     <button onclick="s.emit('stopAllSounds')">Dừng tất cả âm thanh</button>
     <button onclick="s.emit('logoutAllPlayerWebs')">Đăng xuất tất cả người chơi</button>
   </div>
@@ -300,9 +302,9 @@
     }
     function hideWord(wordNum) {
       s.emit('hideWord', wordNum)
-      s.emit('openSlam')
+      if (currentRoundIndex != 2) s.emit('openSlam')
       s.emit('sound', 'time up 10s')
-      s.emit('showQuestion', '')
+      if (currentRoundIndex != 2) s.emit('showQuestion', '')
       s.emit('unhighlightWord')
     }
     function resetCrossword() {
@@ -327,7 +329,7 @@
       $('#wordList').css('display', 'grid')
       $('#finaleWordList').css('display', 'none')
       s.emit('sound', 'reveal crossword')
-      s.emit('generateCrosswordGrid', crosswordGrids[0], wordCoordinates[0], crosswordClues[0], letterQnas[0])
+      s.emit('generateCrosswordGrid', crosswordGrids[0], wordCoordinates[0], crosswordClues[0], letterQnas[0], false)
       $('#wordList button:nth-child(4n+2)').each((i, btn) => {
         $(btn).text(crosswordClues[0][i])
       })
@@ -339,7 +341,7 @@
       $('#wordList').css('display', 'grid')
       $('#finaleWordList').css('display', 'none')
       s.emit('sound', 'reveal crossword')
-      s.emit('generateCrosswordGrid', crosswordGrids[1], wordCoordinates[1], crosswordClues[1], letterQnas[1])
+      s.emit('generateCrosswordGrid', crosswordGrids[1], wordCoordinates[1], crosswordClues[1], letterQnas[1], false)
       $('#wordList button:nth-child(4n+2)').each((i, btn) => {
         $(btn).text(crosswordClues[1][i])
       })
@@ -353,7 +355,7 @@
         $('#finaleLetterList button:nth-child(' + (index + 1) + ')').text(`${index + 1}. ${letter}`)
       })
       s.emit('sound', 'finale start')
-      s.emit('generateCrosswordGrid', crosswordGrids[2], wordCoordinates[2], crosswordClues[2], letterQnas[2])
+      s.emit('generateCrosswordGrid', crosswordGrids[2], wordCoordinates[2], crosswordClues[2], letterQnas[2], true)
       $('#wordList button:nth-child(4n+2)').each((i, btn) => {
         $(btn).text(crosswordClues[2][i])
       })

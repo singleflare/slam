@@ -55,8 +55,8 @@ let crosswordGrid = [], wordCoordinates = [], letterQnas = [], crosswordClues = 
 let alphabet = 'A Ă Â B C D Đ E Ê G H I K L M N O Ô Ơ P Q R S T U Ư V X Y'.split(' ')
 
 io.on('connection',(s)=>{
-  s.on('generateCrosswordGrid',(crossword, coords, clues, qnas)=>{
-    io.emit('generateCrosswordGrid', crossword);
+  s.on('generateCrosswordGrid',(crossword, coords, clues, qnas, isFinal)=>{
+    io.emit('generateCrosswordGrid', crossword,isFinal);
     crosswordGrid = crossword;
     wordCoordinates = coords;
     crosswordClues = clues;
@@ -72,7 +72,6 @@ io.on('connection',(s)=>{
         crosswordState[i] = 3;
       }
     }
-    console.log('generateCrosswordGrid', crosswordGrid, wordCoordinates, crosswordClues, letterQnas,crosswordState)
   })
   s.on('resetCrossword',()=>{
     io.emit('resetCrossword');
@@ -94,6 +93,16 @@ io.on('connection',(s)=>{
       }
     }
     io.emit('revealWord', indexesAndLettersToOpen,isFinal);
+  })
+  s.on('hideWord',(wordNum)=>{
+    let indexesToHide = [];
+    let wordCoordinate=wordCoordinates[wordNum-1]
+    for(let i=0;i<wordCoordinate.length;i++){
+      if(crosswordState[wordCoordinate[i]]!=2){
+        indexesToHide.push({ index: wordCoordinate[i]});
+      }
+    }
+    io.emit('hideWord',indexesToHide);
   })
   s.on('checkRemainingLetterCount',(letter)=>{
     let count = 0;
