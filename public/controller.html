@@ -302,9 +302,12 @@
     }
     function hideWord(wordNum) {
       s.emit('hideWord', wordNum)
-      if (currentRoundIndex != 2) s.emit('openSlam')
+      if (currentRoundIndex != 2) {
+        s.emit('stopAllSounds')
+        s.emit('openSlam')
+        s.emit('showQuestion', '')
+      }
       s.emit('sound', 'time up 10s')
-      if (currentRoundIndex != 2) s.emit('showQuestion', '')
       s.emit('unhighlightWord')
     }
     function resetCrossword() {
