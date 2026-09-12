@@ -278,7 +278,7 @@
         for (let r = 1; r <= 29; r++) {
           if (getCellValue(sheet, 14, r) > 0) letterQnas[sheetNum].push({ letter: getCellValue(sheet, 13, r), numOfLetters: getCellValue(sheet, 14, r), question: getCellValue(sheet, 15, r), beforeAnswer: getCellValue(sheet, 16, r), afterAnswer: getCellValue(sheet, 17, r), explanation: getCellValue(sheet, 18, r) })
           if (r <= 10) crosswordClues[sheetNum].push(getCellValue(sheet, 20, r))
-          if (r <= 8 && sheetNum == 2) finaleLetters.push(getCellValue(sheet, 16, r))
+          if (r <= 8 && sheetNum == 2) finaleLetters.push(getCellValue(sheet, 18, r))
         }
         if (sheetNum == 2) finaleCategory = getCellValue(sheet, 1, 12)
       }
