@@ -77,8 +77,10 @@ io.on('connection',(s)=>{
     io.emit('resetCrossword');
   })
   s.on('showQuestion',(question)=>{
-    console.log('showQuestion', question)
     io.emit('showQuestion', question);
+  })
+  s.on('showSecondary',(secondary)=>{
+    io.emit('showSecondary', secondary);
   })
   s.on('showAnswer',(answer)=>{
     io.emit('showAnswer', answer);

@@ -34,7 +34,8 @@
     .tileText {
       position: absolute;
       font-family: 'ChronicaPro-Bold';
-      font-size: 45pt;
+      font-size: 50pt;
+      /* margin-top: -7px; */
       width: 100%;
       text-align: center;
       left: 0;
@@ -148,6 +149,9 @@
     </div>
     <div id='answer'
       style='position: absolute;top: 423px;width: 12%;font-size: 40pt;text-align: center;font-family: ChronicaPro-Bold;color: white;'>
+    </div>
+    <div id='secondary'
+      style='position: absolute;top: 422px;width: 87%;left:90px;font-size: 40pt;text-align: center;font-family: ChronicaPro-Bold;color: #061483;'>
     </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
@@ -341,6 +345,7 @@
     });
     s.on('showQuestion', question => showQuestion(question))
     s.on('showAnswer', answer => showAnswer(answer))
+    s.on('showSecondary', secondary => $('#secondary').text(secondary))
     s.on('ansWrong', () => ansWrong())
     s.on('resetCrossword', () => resetCrossword())
     s.on('revealWord', (indexesAndLettersToOpen, isFinal) => {

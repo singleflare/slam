@@ -10,7 +10,8 @@
 <body style='background: black;'>
   <style>
     * {
-      color: white
+      color: white;
+      font-family: Arial;
     }
 
     button {
@@ -39,6 +40,14 @@
       background: black;
       color: white;
     }
+
+    .width20 {
+      width: 30%;
+    }
+
+    .flexContainer {
+      display: flex;
+    }
   </style>
   <div>
     <input type="file" id="fileInput" accept=".xlsx">
@@ -49,25 +58,48 @@
   </div>
   <div style='width:100%'>
     <div id='letterQna'>
-      <div id='letterQuestion'
-        style='display:flex;text-align:center;height: 100px;align-items: center;justify-content: center;'>Câu
-        hỏi ở đây
-      </div>
-      <div class='flexContainer'>
-        <div id='letterAnswer'>-</div>
-        <div id='letterExplanation'>-</div>
-        <div id='letterCount'>-</div>
-      </div>
-      <button onClick='previewPrevLetterQuestion()'>CH chữ trước</button>
-      <button onClick='previewNextLetterQuestion()'>CH chữ sau</button>
-      <button onClick='showLetterQuestion()'>Hiện CH</button>
-      <button onClick="letterQuestionAnsCorrect()">Đúng</button>
-      <button onClick="letterQuestionAnsWrong()">Sai</button>
-      <button onClick="revealSpecificLetterInCrossword()">Hiện chữ cái trong ô chữ</button>
-      <button onClick="s.emit('openSlam')">Mở nút Slam</button>
-      <button onClick="s.emit('timer60s')">60s</button>
+      <table style='width:100%;text-align:center;height:150px;'>
+        <tbody>
+          <tr>
+            <td colspan="3" rowspan="3">
+              <div style='display:flex;height:100%;'>
+                <button style='width:5%;text-align:center;height:100%;font-size:30px'
+                  onClick='previewPrevLetterQuestion()'>🞀</button>
+                <div style='width:90%;text-align:center'>
+                  <div id='letterQuestion' style='height:80%'>CH</div>
+                  <div>
+                    <button onClick='showLetterQuestion()'>Hiện CH</button>
+                    <button onClick='showSecondaryQuestion()'>Thanh phụ CH</button>
+                    <button onClick="letterQuestionAnsCorrect()">Đúng</button>
+                    <button onClick="letterQuestionAnsWrong()">Sai</button>
+                    <button onClick='showSecondaryAnswer()'>Thanh phụ đáp án</button>
+                    <button onClick="revealSpecificLetterInCrossword()">Hiện chữ cái trong ô chữ</button>
+                    <button onClick="s.emit('openSlam')">Mở nút Slam</button>
+                    <button onClick="s.emit('timer60s')">60s</button>
+                  </div>
+                </div>
+                <button style='width:5%;text-align:center;height:100%;font-size:30px'
+                  onClick='previewNextLetterQuestion()'>🞂</button>
+              </div>
+            </td>
+            <td id='letterAnswer'>Chữ: -</td>
+          </tr>
+          <tr>
+            <td id='totalLetterCount'>Tổng: -</td>
+          </tr>
+          <tr>
+            <td id='openedLetterCount'>Mở: -</td>
+          </tr>
+          <tr style='text-align:center;width:100%'>
+            <td class='width20' id='letterExplanation'></td>
+            <td class='width20' id='beforeQuestion'></td>
+            <td class='width20' id='afterQuestion'></td>
+            <td class='width20' id='remainingLetterCount'>Còn: -</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <div id='wordList' style='display:grid;grid-template-columns: 10% 70% 10% 10%;grid-template-rows: repeat(10, 1fr);'>
+    <div id='wordList' style='display:grid;grid-template-columns: 5% 85% 5% 5%;grid-template-rows: repeat(10, 1fr);'>
       <button onClick="highlightWord(1)">1</button>
       <button onClick="showWordDef(1)"></button>
       <button onClick="revealWord(1)">Đ</button>
@@ -147,25 +179,33 @@
       <button onClick="chooseFinaleLetter(8)">8.</button>
     </div>
   </div>
-  <div>
-    <button onclick="s.emit('sound','intro')">Intro</button>
-    <button onclick="s.emit('sound','talk bed')">Nền trò chuyện</button>
-    <button onclick="s.emit('sound','round intro')">Intro vòng 1&2</button>
-    <button onclick="s.emit('sound','finale intro')">Intro vòng CK</button>
-    <button onclick="s.emit('sound','finale win')">Thắng vđb</button>
-    <button onclick="s.emit('sound','slam outro remake')">Outro</button>
-    <button onclick="s.emit('stopAllSounds')">Dừng tất cả âm thanh</button>
-    <button onclick="s.emit('logoutAllPlayerWebs')">Đăng xuất tất cả người chơi</button>
+  <div class='flexContainer'>
+    <div>
+      <button onclick="s.emit('sound','intro')">Intro</button>
+      <button onclick="s.emit('sound','talk bed')">Nền trò chuyện</button>
+      <button onclick="s.emit('sound','round intro')">Intro vòng 1&2</button>
+      <button onclick="s.emit('sound','finale intro')">Intro vòng CK</button>
+      <button onclick="s.emit('sound','finale win')">Thắng vđb</button>
+      <button onclick="s.emit('sound','slam outro remake')">Outro</button>
+      <button onclick="s.emit('stopAllSounds')">Dừng tất cả âm thanh</button>
+      <button onclick="s.emit('logoutAllPlayerWebs')">Đăng xuất tất cả người chơi</button>
+    </div>
+    <div>
+      <div class='flexContainer'>
+        <input type='text' id='p1NameInput' placeholder='Tên NC1' onchange="updateScoreboard()">
+        <input type='number' id='p1ScoreInput' placeholder='Điểm NC1' onchange="updateScoreboard()">
+      </div>
+      <div class='flexContainer'>
+        <input type='text' id='p2NameInput' placeholder='Tên NC2' onchange="updateScoreboard()">
+        <input type='number' id='p2ScoreInput' placeholder='Điểm NC2' onchange="updateScoreboard()">
+      </div>
+      <div class='flexContainer'>
+        <input type='text' id='p3NameInput' placeholder='Tên NC3' onchange="updateScoreboard()">
+        <input type='number' id='p3ScoreInput' placeholder='Điểm NC3' onchange="updateScoreboard()">
+      </div>
+    </div>
   </div>
   <div>
-    <input type='text' id='p1NameInput' placeholder='Tên NC1' onchange="updateScoreboard()">
-    <input type='number' id='p1ScoreInput' placeholder='Điểm NC1' onchange="updateScoreboard()">
-    <br>
-    <input type='text' id='p2NameInput' placeholder='Tên NC2' onchange="updateScoreboard()">
-    <input type='number' id='p2ScoreInput' placeholder='Điểm NC2' onchange="updateScoreboard()">
-    <br>
-    <input type='text' id='p3NameInput' placeholder='Tên NC3' onchange="updateScoreboard()">
-    <input type='number' id='p3ScoreInput' placeholder='Điểm NC3' onchange="updateScoreboard()">
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
     integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA=="
@@ -236,9 +276,9 @@
           }
         }
         for (let r = 1; r <= 29; r++) {
-          if (getCellValue(sheet, 14, r) > 0) letterQnas[sheetNum].push({ letter: getCellValue(sheet, 13, r), numOfLetters: getCellValue(sheet, 14, r), question: getCellValue(sheet, 15, r), explanation: getCellValue(sheet, 16, r) })
-          if (r <= 10) crosswordClues[sheetNum].push(getCellValue(sheet, 18, r))
-          if (r <= 8 && sheetNum == 2) finaleLetters.push(getCellValue(sheet, 18, r))
+          if (getCellValue(sheet, 14, r) > 0) letterQnas[sheetNum].push({ letter: getCellValue(sheet, 13, r), numOfLetters: getCellValue(sheet, 14, r), question: getCellValue(sheet, 15, r), beforeAnswer: getCellValue(sheet, 16, r), afterAnswer: getCellValue(sheet, 17, r), explanation: getCellValue(sheet, 18, r) })
+          if (r <= 10) crosswordClues[sheetNum].push(getCellValue(sheet, 20, r))
+          if (r <= 8 && sheetNum == 2) finaleLetters.push(getCellValue(sheet, 16, r))
         }
         if (sheetNum == 2) finaleCategory = getCellValue(sheet, 1, 12)
       }
@@ -248,26 +288,32 @@
     function previewPrevLetterQuestion() {
       s.emit('showQuestion', '')
       s.emit('showAnswer', '')
+      s.emit('showSecondary', '')
       s.emit('closeSlam')
       if (currentLetterQnaIndex > 0) {
         currentLetterQnaIndex--
         $('#letterQuestion').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].question)
-        $('#letterCount').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].numOfLetters)
+        $('#totalLetterCount').text('Tổng: ' + letterQnas[currentRoundIndex][currentLetterQnaIndex].numOfLetters)
         $('#letterExplanation').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].explanation)
-        $('#letterAnswer').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].letter)
+        $('#letterAnswer').text('Chữ: ' + letterQnas[currentRoundIndex][currentLetterQnaIndex].letter)
+        $('#beforeQuestion').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].beforeAnswer)
+        $('#afterQuestion').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].afterAnswer)
         s.emit('checkRemainingLetterCount', letterQnas[currentRoundIndex][currentLetterQnaIndex].letter)
       }
     }
     function previewNextLetterQuestion() {
       s.emit('showQuestion', '')
       s.emit('showAnswer', '')
+      s.emit('showSecondary', '')
       s.emit('closeSlam')
       if (currentLetterQnaIndex < letterQnas[currentRoundIndex].length - 1) {
         currentLetterQnaIndex++
         $('#letterQuestion').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].question)
-        $('#letterCount').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].numOfLetters)
+        $('#totalLetterCount').text('Tổng: ' + letterQnas[currentRoundIndex][currentLetterQnaIndex].numOfLetters)
         $('#letterExplanation').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].explanation)
-        $('#letterAnswer').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].letter)
+        $('#letterAnswer').text('Chữ: ' + letterQnas[currentRoundIndex][currentLetterQnaIndex].letter)
+        $('#beforeQuestion').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].beforeAnswer)
+        $('#afterQuestion').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].afterAnswer)
         s.emit('checkRemainingLetterCount', letterQnas[currentRoundIndex][currentLetterQnaIndex].letter)
       }
     }
@@ -326,6 +372,20 @@
       s.emit('revealSpecificLetterInCrossword', letterQnas[currentRoundIndex][currentLetterQnaIndex].letter, false)
       s.emit('showQuestion', '')
       s.emit('showAnswer', '')
+      s.emit('showSecondary', '')
+    }
+
+    function shuffleLetterQnas(letterQnas) {
+      let leastLetterQnas = [], averageLetterQnas = [], mostLetterQnas = []
+      letterQnas.forEach((qna) => {
+        if (qna.numOfLetters <= 3) leastLetterQnas.push(qna)
+        else if (qna.numOfLetters <= 5) averageLetterQnas.push(qna)
+        else mostLetterQnas.push(qna)
+      })
+      shuffle(leastLetterQnas)
+      shuffle(averageLetterQnas)
+      shuffle(mostLetterQnas)
+      return [...leastLetterQnas, ...averageLetterQnas, ...mostLetterQnas]
     }
 
     function r1() {
@@ -336,7 +396,7 @@
       $('#wordList button:nth-child(4n+2)').each((i, btn) => {
         $(btn).text(crosswordClues[0][i])
       })
-      shuffle(letterQnas[0])
+      letterQnas[0] = shuffleLetterQnas(letterQnas[0])
       currentRoundIndex = 0
       currentLetterQnaIndex = -1
     }
@@ -348,6 +408,7 @@
       $('#wordList button:nth-child(4n+2)').each((i, btn) => {
         $(btn).text(crosswordClues[1][i])
       })
+      letterQnas[1] = shuffleLetterQnas(letterQnas[1])
       currentRoundIndex = 1
       currentLetterQnaIndex = -1
     }
@@ -374,9 +435,16 @@
     function updateScoreboard() {
       s.emit('updateScoreboard', [$('#p1NameInput').val(), $('#p2NameInput').val(), $('#p3NameInput').val()], [$('#p1ScoreInput').val(), $('#p2ScoreInput').val(), $('#p3ScoreInput').val()])
     }
+    function showSecondaryQuestion() {
+      s.emit('showSecondary', letterQnas[currentRoundIndex][currentLetterQnaIndex].beforeAnswer)
+    }
+    function showSecondaryAnswer() {
+      s.emit('showSecondary', letterQnas[currentRoundIndex][currentLetterQnaIndex].afterAnswer)
+    }
 
     s.on('remainingLetterCount', (count) => {
-      $('#letterCount').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].numOfLetters + '-' + (letterQnas[currentRoundIndex][currentLetterQnaIndex].numOfLetters - count))
+      $('#openedLetterCount').text('Mở: ' + (letterQnas[currentRoundIndex][currentLetterQnaIndex].numOfLetters - count))
+      $('#remainingLetterCount').text('Còn: ' + count)
     })
   </script>
 </body>
