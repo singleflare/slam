@@ -10,7 +10,7 @@ const { join } = require('node:path');
 const { isKeyObject } = require('node:util/types');
 app.use(express.json());
 app.use(express.static('public'))
-console.log('http://localhost:3000/pages/controller.html')
+console.log('http://localhost:3000/controller.html')
 
 // Password protection - controller sets these
 let pagePasswords = {p1: '',p2: '',p3: ''};
@@ -56,6 +56,7 @@ let alphabet = 'A Ă Â B C D Đ E Ê G H I K L M N O Ô Ơ P Q R S T U Ư V X Y
 
 io.on('connection',(s)=>{
   s.on('generateCrosswordGrid',(crossword, coords, clues, qnas, isFinal)=>{
+    console.log(crossword, coords, clues, qnas,isFinal)
     io.emit('generateCrosswordGrid', crossword,isFinal);
     crosswordGrid = crossword;
     wordCoordinates = coords;
@@ -85,7 +86,7 @@ io.on('connection',(s)=>{
   s.on('showAnswer',(answer)=>{
     io.emit('showAnswer', answer);
   })
-  s.on('revealWord',(wordNum,isFinal)=>{
+  s.on('controllerSolveWord',(wordNum)=>{
     let indexesAndLettersToOpen = [];
     let wordCoordinate=wordCoordinates[wordNum-1]
     for(let i=0;i<wordCoordinate.length;i++){
@@ -94,7 +95,18 @@ io.on('connection',(s)=>{
         crosswordState[wordCoordinate[i]]=2
       }
     }
-    io.emit('revealWord', indexesAndLettersToOpen,isFinal);
+    io.emit('controllerSolveWord', indexesAndLettersToOpen);
+  })
+  s.on('revealWord',(wordNum,isFinal,isSlam)=>{
+    let indexesAndLettersToOpen = [];
+    let wordCoordinate=wordCoordinates[wordNum-1]
+    for(let i=0;i<wordCoordinate.length;i++){
+      indexesAndLettersToOpen.push({ index: wordCoordinate[i], letter: crosswordGrid[wordCoordinate[i]] });
+      if(crosswordState[wordCoordinate[i]]===1){
+        crosswordState[wordCoordinate[i]]=2
+      }
+    }
+    io.emit('revealWord', indexesAndLettersToOpen,isFinal,isSlam);
   })
   s.on('hideWord',(wordNum)=>{
     let indexesToHide = [];
@@ -230,6 +242,7 @@ io.on('connection',(s)=>{
   })
   s.on('highlightWord',(wordNum)=>{
     io.emit('highlightWord', wordCoordinates[wordNum-1]);
+    io.emit('highlightNumber', [wordNum])
   })
   s.on('unhighlightWord',()=>{
     io.emit('unhighlightWord');
@@ -296,5 +309,8 @@ io.on('connection',(s)=>{
   })
   s.on('logoutAllPlayerWebs',()=>{
     io.emit('logoutAllPlayerWebs')
+  })
+  s.on('solveBoard',()=>{
+    io.emit('solveBoard')
   })
 })

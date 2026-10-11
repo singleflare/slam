@@ -274,8 +274,12 @@
       playSound('show letter in crossword')
       changeState(tileCoordinate, 'toAddPoint', letter);
     }
+    function controllerSolveWord(tileCoordinate, letter) {
+      changeState(tileCoordinate, 'Revealed', letter);
+    }
     function hideWord(tileCoordinate, letter) {
       changeState(tileCoordinate, 'Missed', letter);
+
     }
 
     function playerBuzz(player) {
@@ -284,6 +288,7 @@
     }
     let slamInterval;
     function playerSlam(player) {
+      playSound('slam', vol)
       $(`#scoreboard img:nth-child(${player})`).attr('src', 'gpx/scoreBarWebBuzzed.png');
       slamInterval = setInterval(() => {
         $(`#scoreboard img:nth-child(${player})`).attr('src', 'gpx/scoreBarWeb.png');
@@ -291,7 +296,6 @@
           $(`#scoreboard img:nth-child(${player})`).attr('src', 'gpx/scoreBarWebBuzzed.png');
         }, 500)
       }, 1000)
-      playSound('slam', vol)
     }
     function resetSlam() {
       clearInterval(slamInterval)
@@ -349,6 +353,7 @@
     s.on('ansWrong', () => ansWrong())
     s.on('resetCrossword', () => resetCrossword())
     s.on('revealWord', (indexesAndLettersToOpen, isFinal) => {
+      $('.tile').css('opacity', 1);
       if (!isFinal) {
         let interval
         let i = 0
@@ -369,6 +374,7 @@
       }
     });
     s.on('hideWord', (indexesToHide) => {
+      $('.tile').css('opacity', 1);
       indexesToHide.forEach((item, i) => {
         hideWord(indexesToHide[i].index);
       })
@@ -444,6 +450,20 @@
       $('#p1Name').text(data.names[0])
       $('#p2Name').text(data.names[1])
       $('#p3Name').text(data.names[2])
+    })
+    s.on('solveBoard', () => {
+      playSound('slam')
+      $('#crosswordGrid > .tile').each((i, tile) => {
+        if ($(tile).find('.tileText').text() != '') {
+          $(tile).find('img').attr('src', 'gpx/letterUnopened.png')
+          $(tile).find('.tileText').css('color', '#061483')
+        }
+      })
+    })
+    s.on('controllerSolveWord', (indexesAndLettersToOpen) => {
+      indexesAndLettersToOpen.forEach((item, i) => {
+        controllerSolveWord(indexesAndLettersToOpen[i].index, indexesAndLettersToOpen[i].letter);
+      })
     })
   </script>
   <script src='disableDevTools.js'></script>

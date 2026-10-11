@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Board</title>
+</head>
+
+<body style='margin:0;overflow:hidden;'>
+  <style>
+    @font-face {
+      font-family: 'Helvetica Condensed';
+      src: url('gpx/HelveticaNeue-CondensedBlack-10.ttf')
+    }
+
+    @font-face {
+      font-family: 'Helvetica Bold';
+      src: url('gpx/HelveticaNeue-Bold-02.ttf')
+    }
+
+    img {
+      position: absolute;
+    }
+
+    #p1Name,
+    #p2Name,
+    #p3Name,
+    #p1Score,
+    #p2Score,
+    #p3Score {
+      position: absolute;
+      width: 297px;
+      text-shadow: 2px 2px 2px black;
+    }
+
+    #p1Name,
+    #p2Name,
+    #p3Name {
+      font-size: 30pt;
+      text-align: center;
+      color: white;
+      left: 0;
+      top: 30px;
+      font-family: 'Helvetica Bold';
+    }
+
+    #p1Score,
+    #p2Score,
+    #p3Score {
+      width: 297px;
+      top: 90px;
+      font-size: 75pt;
+      text-align: center;
+      color: white;
+      font-family: 'Helvetica Condensed';
+    }
+
+    .buzzed,
+    .slam {
+      clip-path: inset(1920px 0 0 0);
+    }
+
+    .buzzed.one,
+    .slam.one {
+      clip-path: inset(0 1270px 0 0)
+    }
+
+    .buzzed.two,
+    .slam.two {
+      clip-path: inset(inset(0 650px 0 650px))
+    }
+
+    .buzzed.three,
+    .slam.three {
+      clip-path: inset(0 0 0 1270px)
+    }
+  </style>
+  <img src='gpx/podiums blue.png'>
+  <img src='gpx/podiums buzzed.png' class='buzzed'>
+  <img src='gpx/podiums slam.png' class='slam'>
+  <div id='scoreboard' style='position:absolute;left: 190px;top: 550px;'>
+    <span id='p1Name' style='left:0'>NGƯỜI CHƠI</span>
+    <span id='p2Name' style='left:623px'>NGƯỜI CHƠI</span>
+    <span id='p3Name' style='left:1244px'>NGƯỜI CHƠI</span>
+    <span id='p1Score' style='left:0;'>0</span>
+    <span id='p2Score' style='left:623px'>0</span>
+    <span id='p3Score' style='left:1244px'>0</span>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+    integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/4.0.0/jquery.min.js"
+    integrity="sha512-8LENNbXmzI/Gbj+OwXmqR6V4QaUAw0/porPzy1+dQoJqC0JPHedWoe0DDOTL2uHA5XXJyIsPtiMHH86pVlay6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"
+    integrity="sha512-xi/RZRIF/S0hJ+yJJYuZ5yk6/8pCiRlEXZzoguSMl+vk2i3m6UjUO/WcZ11blRL/O+rnj94JRGwt/CHbc9+6EA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const s = io();
+
+    function playerBuzz(player) {
+      $('.buzzed').removeClass('one two three');
+      $(`.buzzed`).addClass(player == 1 ? 'one' : player == 2 ? 'two' : 'three');
+    }
+    let slamInterval;
+    function playerSlam(player) {
+      $('.slam').removeClass('one two three');
+      slamInterval = setInterval(() => {
+        $(`.slam`).addClass(player == 1 ? 'one' : player == 2 ? 'two' : 'three');
+        setTimeout(() => {
+          $('.slam').removeClass('one two three');
+        }, 500)
+      }, 1000)
+    }
+    function resetSlam() {
+      clearInterval(slamInterval)
+      $('.slam').removeClass('one two three');
+    }
+    s.on('slamsReset', () => {
+      resetSlam()
+    })
+    s.on('slamsClose', () => {
+      resetSlam()
+    })
+
+    function resetBuzz(player) {
+      $('.buzzed').removeClass('one two three');
+    }
+    s.on('buzzed', player => playerBuzz(player))
+    function update(player, name, score) {
+      if (name) $(`#p${player}Name`).text(name);
+      if (score) $(`#p${player}Score`).text(score);
+    }
+    s.on('slammed', player => playerSlam(player))
+    s.on('buzzersReset', () => {
+      resetBuzz(1)
+      resetBuzz(2)
+      resetBuzz(3)
+    })
+    s.on('buzzersClose', () => {
+      resetBuzz(1)
+      resetBuzz(2)
+      resetBuzz(3)
+    })
+    s.on('updateScoreboard', (data) => {
+      console.log('updateScoreboard', data)
+      $('#p1Score').text(data.scores[0])
+      $('#p2Score').text(data.scores[1])
+      $('#p3Score').text(data.scores[2])
+      $('#p1Name').text(data.names[0])
+      $('#p2Name').text(data.names[1])
+      $('#p3Name').text(data.names[2])
+    })
+  </script>
+  <script src='disableDevTools.js'></script>
+</body>
+
+</html>

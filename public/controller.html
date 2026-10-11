@@ -12,6 +12,7 @@
     * {
       color: white;
       font-family: Arial;
+      font-size: 22pt;
     }
 
     button {
@@ -31,7 +32,10 @@
 
     .flexContainer {
       display: flex;
-      justify-content: space-around;
+    }
+
+    .flexContainerButtons>* {
+      width: 100%;
     }
 
     input[type="text"],
@@ -45,8 +49,27 @@
       width: 30%;
     }
 
-    .flexContainer {
-      display: flex;
+    button:disabled {
+      opacity: .5
+    }
+
+    .btnInDiv {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+    }
+
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
     }
   </style>
   <div>
@@ -57,28 +80,24 @@
     <button onclick="resetCrossword()">Reset</button>
   </div>
   <div style='width:100%'>
-    <div id='letterQna'>
-      <table style='width:100%;text-align:center;height:150px;'>
+    <div id='letterQna' style='display:flex;'>
+      <table style='width:75%;text-align:center;height:300px'>
         <tbody>
           <tr>
             <td colspan="3" rowspan="3">
               <div style='display:flex;height:100%;'>
-                <button style='width:5%;text-align:center;height:100%;font-size:30px'
+                <button class='btnInDiv' style='width:5%;text-align:center;height:100%;font-size:30px'
                   onClick='previewPrevLetterQuestion()'>🞀</button>
                 <div style='width:90%;text-align:center'>
-                  <div id='letterQuestion' style='height:80%'>CH</div>
-                  <div>
-                    <button onClick='showLetterQuestion()'>Hiện CH</button>
-                    <button onClick='showSecondaryQuestion()'>Thanh phụ CH</button>
-                    <button onClick="letterQuestionAnsCorrect()">Đúng</button>
-                    <button onClick="letterQuestionAnsWrong()">Sai</button>
-                    <button onClick='showSecondaryAnswer()'>Thanh phụ đáp án</button>
-                    <button onClick="revealSpecificLetterInCrossword()">Hiện chữ cái trong ô chữ</button>
+                  <button id='letterQuestion' class='btnInDiv' onclick='showLetterQuestion()'>CH</button>
+                  <div id='questionControls'>
+
                     <button onClick="s.emit('openSlam')">Mở nút Slam</button>
+                    <button onClick="s.emit('solveBoard')">Giải ô chữ</button>
                     <button onClick="s.emit('timer60s')">60s</button>
                   </div>
                 </div>
-                <button style='width:5%;text-align:center;height:100%;font-size:30px'
+                <button class='btnInDiv' style='width:5%;text-align:center;height:100%;font-size:30px'
                   onClick='previewNextLetterQuestion()'>🞂</button>
               </div>
             </td>
@@ -91,55 +110,102 @@
             <td id='openedLetterCount'>Mở: -</td>
           </tr>
           <tr style='text-align:center;width:100%'>
+            <td class='width20'><button id='beforeQuestion' class='btnInDiv' onClick='showSecondaryQuestion()'>Thanh phụ
+                câu hỏi</button></td>
+            <td class='width20'><button id='afterQuestion' class='btnInDiv' onClick='showSecondaryAnswer()'>Thanh phụ
+                đáp án</button></td>
             <td class='width20' id='letterExplanation'></td>
-            <td class='width20' id='beforeQuestion'></td>
-            <td class='width20' id='afterQuestion'></td>
-            <td class='width20' id='remainingLetterCount'>Còn: -</td>
+            <td class='width20'><button id='remainingLetterCount' class='btnInDiv'
+                onClick='revealSpecificLetterInCrossword()'>Còn: -</button></td>
           </tr>
         </tbody>
       </table>
+      <div style='width:25%;'>
+        <div>
+          <div class='flexContainer'>
+            <input type='text' id='p1NameInput' placeholder='Tên NC1' onchange="updateScoreboard()" style='width:90%'>
+            <input type='number' id='p1ScoreInput' onchange="updateScoreboard()" style='width:10%'>
+          </div>
+          <div class='flexContainer'>
+            <input type='text' id='p2NameInput' placeholder='Tên NC2' onchange="updateScoreboard()" style='width:90%'>
+            <input type='number' id='p2ScoreInput' onchange="updateScoreboard()" style='width:10%'>
+          </div>
+          <div class='flexContainer'>
+            <input type='text' id='p3NameInput' placeholder='Tên NC3' onchange="updateScoreboard()" style='width:90%'>
+            <input type='number' id='p3ScoreInput' onchange="updateScoreboard()" style='width:10%'>
+          </div>
+        </div>
+        <div>
+          <div style='text-align: center;'>Người chơi giành quyền</div>
+          <div class='flexContainer flexContainerButtons'>
+            <button onClick="letterQuestionAnsCorrect()">Đúng</button>
+            <button onClick="letterQuestionAnsWrong()">Sai</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div id='wordList' style='display:grid;grid-template-columns: 5% 85% 5% 5%;grid-template-rows: repeat(10, 1fr);'>
-      <button onClick="highlightWord(1)">1</button>
+    <div id='wordList'
+      style='display:grid;grid-template-columns: 10% 20% 55% 5% 5% 5%;grid-template-rows: repeat(10, 1fr);'>
+      <button onClick="highlightWord(1)">Focus 1</button>
+      <button onClick="highlightWord(1);showWordDef(1)">Focus & Gợi ý 1</button>
       <button onClick="showWordDef(1)"></button>
       <button onClick="revealWord(1)">Đ</button>
       <button onClick="hideWord(1)">S</button>
-      <button onClick="highlightWord(2)">2</button>
+      <button onClick="controllerSolveWord(1)">G</button>
+      <button onClick="highlightWord(2)">Focus 2</button>
+      <button onClick="highlightWord(2);showWordDef(2)">Focus & Gợi ý 2</button>
       <button onClick="showWordDef(2)"></button>
       <button onClick="revealWord(2)">Đ</button>
       <button onClick="hideWord(2)">S</button>
-      <button onClick="highlightWord(3)">3</button>
+      <button onClick="controllerSolveWord(2)">G</button>
+      <button onClick="highlightWord(3)">Focus 3</button>
+      <button onClick="highlightWord(3);showWordDef(3)">Focus & Gợi ý 3</button>
       <button onClick="showWordDef(3)"></button>
       <button onClick="revealWord(3)">Đ</button>
       <button onClick="hideWord(3)">S</button>
-      <button onClick="highlightWord(4)">4</button>
+      <button onClick="controllerSolveWord(3)">G</button>
+      <button onClick="highlightWord(4)">Focus 4</button>
+      <button onClick="highlightWord(4);showWordDef(4)">Focus & Gợi ý 4</button>
       <button onClick="showWordDef(4)"></button>
       <button onClick="revealWord(4)">Đ</button>
       <button onClick="hideWord(4)">S</button>
-      <button onClick="highlightWord(5)">5</button>
+      <button onClick="controllerSolveWord(4)">G</button>
+      <button onClick="highlightWord(5)">Focus 5</button>
+      <button onClick="highlightWord(5);showWordDef(5)">Focus & Gợi ý 5</button>
       <button onClick="showWordDef(5)"></button>
       <button onClick="revealWord(5)">Đ</button>
       <button onClick="hideWord(5)">S</button>
-      <button onClick="highlightWord(6)">6</button>
+      <button onClick="controllerSolveWord(5)">G</button>
+      <button onClick="highlightWord(6)">Focus 6</button>
+      <button onClick="highlightWord(6);showWordDef(6)">Focus & Gợi ý 6</button>
       <button onClick="showWordDef(6)"></button>
       <button onClick="revealWord(6)">Đ</button>
       <button onClick="hideWord(6)">S</button>
-      <button onClick="highlightWord(7)">7</button>
+      <button onClick="controllerSolveWord(6)">G</button>
+      <button onClick="highlightWord(7)">Focus 7</button>
+      <button onClick="highlightWord(7);showWordDef(7)">Focus & Gợi ý 7</button>
       <button onClick="showWordDef(7)"></button>
       <button onClick="revealWord(7)">Đ</button>
       <button onClick="hideWord(7)">S</button>
-      <button onClick="highlightWord(8)">8</button>
+      <button onClick="controllerSolveWord(7)">G</button>
+      <button onClick="highlightWord(8)">Focus 8</button>
+      <button onClick="highlightWord(8);showWordDef(8)">Focus & Gợi ý 8</button>
       <button onClick="showWordDef(8)"></button>
       <button onClick="revealWord(8)">Đ</button>
       <button onClick="hideWord(8)">S</button>
-      <button onClick="highlightWord(9)">9</button>
+      <button onClick="controllerSolveWord(8)">G</button>
+      <button onClick="highlightWord(9)">Focus 9</button>
+      <button onClick="highlightWord(9);showWordDef(9)">Focus & Gợi ý 9</button>
       <button onClick="showWordDef(9)"></button>
       <button onClick="revealWord(9)">Đ</button>
       <button onClick="hideWord(9)">S</button>
-      <button onClick="highlightWord(10)">10</button>
+      <button onClick="controllerSolveWord(9)">G</button>
+      <button onClick="highlightWord(10)">Focus 10</button>
+      <button onClick="highlightWord(10);showWordDef(10)">Focus & Gợi ý 10</button>
       <button onClick="showWordDef(10)"></button>
       <button onClick="revealWord(10)">Đ</button>
       <button onClick="hideWord(10)">S</button>
+      <button onClick="controllerSolveWord(10)">G</button>
     </div>
     <div id='finaleWordList'
       style='display:none;grid-template-columns: repeat(3, 1fr);grid-template-rows: repeat(8, 1fr);'>
@@ -183,26 +249,13 @@
     <div>
       <button onclick="s.emit('sound','intro')">Intro</button>
       <button onclick="s.emit('sound','talk bed')">Nền trò chuyện</button>
+      <button onclick="s.emit('sound','in crossword bed')">Nền trả lời ô chữ/nền slam</button>
       <button onclick="s.emit('sound','round intro')">Intro vòng 1&2</button>
       <button onclick="s.emit('sound','finale intro')">Intro vòng CK</button>
       <button onclick="s.emit('sound','finale win')">Thắng vđb</button>
       <button onclick="s.emit('sound','slam outro remake')">Outro</button>
       <button onclick="s.emit('stopAllSounds')">Dừng tất cả âm thanh</button>
       <button onclick="s.emit('logoutAllPlayerWebs')">Đăng xuất tất cả người chơi</button>
-    </div>
-    <div>
-      <div class='flexContainer'>
-        <input type='text' id='p1NameInput' placeholder='Tên NC1' onchange="updateScoreboard()">
-        <input type='number' id='p1ScoreInput' placeholder='Điểm NC1' onchange="updateScoreboard()">
-      </div>
-      <div class='flexContainer'>
-        <input type='text' id='p2NameInput' placeholder='Tên NC2' onchange="updateScoreboard()">
-        <input type='number' id='p2ScoreInput' placeholder='Điểm NC2' onchange="updateScoreboard()">
-      </div>
-      <div class='flexContainer'>
-        <input type='text' id='p3NameInput' placeholder='Tên NC3' onchange="updateScoreboard()">
-        <input type='number' id='p3ScoreInput' placeholder='Điểm NC3' onchange="updateScoreboard()">
-      </div>
     </div>
   </div>
   <div>
@@ -286,10 +339,11 @@
     })
 
     function previewPrevLetterQuestion() {
+      s.emit('closeSlam')
       s.emit('showQuestion', '')
       s.emit('showAnswer', '')
       s.emit('showSecondary', '')
-      s.emit('closeSlam')
+      $('#remainingLetterCount').css('background-color', 'black')
       if (currentLetterQnaIndex > 0) {
         currentLetterQnaIndex--
         $('#letterQuestion').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].question)
@@ -302,10 +356,11 @@
       }
     }
     function previewNextLetterQuestion() {
+      s.emit('closeSlam')
       s.emit('showQuestion', '')
       s.emit('showAnswer', '')
       s.emit('showSecondary', '')
-      s.emit('closeSlam')
+      $('#remainingLetterCount').css('background-color', 'black')
       if (currentLetterQnaIndex < letterQnas[currentRoundIndex].length - 1) {
         currentLetterQnaIndex++
         $('#letterQuestion').text(letterQnas[currentRoundIndex][currentLetterQnaIndex].question)
@@ -333,14 +388,13 @@
       s.emit('sound', 'timer 10s')
     }
     function revealWord(wordNum) {
-      s.emit('revealWord', wordNum)
-      s.emit('openSlam')
-      s.emit('stopAllSounds')
-      s.emit('sound', 'show letter in crossword')
+      //s.emit('revealWord', wordNum, false, isSlam)
+      s.emit('revealWord', wordNum, false)
+      if (!isSlam) {
+        s.emit('openSlam')
+        s.emit('stopAllSounds')
+      }
       s.emit('sound', 'correct')
-      setTimeout(() => {
-        s.emit('unhighlightWord')
-      }, 1000)
     }
     function revealFinalWord(wordNum) {
       s.emit('revealWord', wordNum, true)
@@ -350,11 +404,21 @@
       s.emit('hideWord', wordNum)
       if (currentRoundIndex != 2) {
         s.emit('stopAllSounds')
-        s.emit('openSlam')
-        s.emit('showQuestion', '')
+        if (!isSlam) {
+          s.emit('openSlam')
+          s.emit('showQuestion', '')
+          s.emit('sound', 'time up 10s')
+        }
+        else {
+          s.emit('sound', 'slam wrong')
+        }
       }
-      s.emit('sound', 'time up 10s')
       s.emit('unhighlightWord')
+    }
+    function controllerSolveWord(wordNum) {
+      s.emit('controllerSolveWord', wordNum)
+      s.emit('unhighlightWord')
+      s.emit('sound', 'solution')
     }
     function resetCrossword() {
       s.emit('resetCrossword')
@@ -389,11 +453,12 @@
     }
 
     function r1() {
+      isSlam = false
       $('#wordList').css('display', 'grid')
       $('#finaleWordList').css('display', 'none')
       s.emit('sound', 'reveal crossword')
       s.emit('generateCrosswordGrid', crosswordGrids[0], wordCoordinates[0], crosswordClues[0], letterQnas[0], false)
-      $('#wordList button:nth-child(4n+2)').each((i, btn) => {
+      $('#wordList button:nth-child(6n+3)').each((i, btn) => {
         $(btn).text(crosswordClues[0][i])
       })
       letterQnas[0] = shuffleLetterQnas(letterQnas[0])
@@ -401,11 +466,12 @@
       currentLetterQnaIndex = -1
     }
     function r2() {
+      isSlam = false
       $('#wordList').css('display', 'grid')
       $('#finaleWordList').css('display', 'none')
       s.emit('sound', 'reveal crossword')
       s.emit('generateCrosswordGrid', crosswordGrids[1], wordCoordinates[1], crosswordClues[1], letterQnas[1], false)
-      $('#wordList button:nth-child(4n+2)').each((i, btn) => {
+      $('#wordList button:nth-child(6n+3)').each((i, btn) => {
         $(btn).text(crosswordClues[1][i])
       })
       letterQnas[1] = shuffleLetterQnas(letterQnas[1])
@@ -420,7 +486,7 @@
       })
       s.emit('sound', 'finale start')
       s.emit('generateCrosswordGrid', crosswordGrids[2], wordCoordinates[2], crosswordClues[2], letterQnas[2], true)
-      $('#wordList button:nth-child(4n+2)').each((i, btn) => {
+      $('#wordList button:nth-child(6n+3)').each((i, btn) => {
         $(btn).text(crosswordClues[2][i])
       })
       s.emit('showFinaleLetters')
@@ -445,7 +511,10 @@
     s.on('remainingLetterCount', (count) => {
       $('#openedLetterCount').text('Mở: ' + (letterQnas[currentRoundIndex][currentLetterQnaIndex].numOfLetters - count))
       $('#remainingLetterCount').text('Còn: ' + count)
+      if (count > 0) $('#questionControls>*').prop('disabled', false)
+      if (count <= 0) $('#remainingLetterCount').css('background-color', 'red')
     })
+    s.on('slammed', () => isSlam = true)
   </script>
 </body>
 
