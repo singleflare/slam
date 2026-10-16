@@ -90,12 +90,6 @@
                   onClick='previewPrevLetterQuestion()'>🞀</button>
                 <div style='width:90%;text-align:center'>
                   <button id='letterQuestion' class='btnInDiv' onclick='showLetterQuestion()'>CH</button>
-                  <div id='questionControls'>
-
-                    <button onClick="s.emit('openSlam')">Mở nút Slam</button>
-                    <button onClick="s.emit('solveBoard')">Giải ô chữ</button>
-                    <button onClick="s.emit('timer60s')">60s</button>
-                  </div>
                 </div>
                 <button class='btnInDiv' style='width:5%;text-align:center;height:100%;font-size:30px'
                   onClick='previewNextLetterQuestion()'>🞂</button>
@@ -140,6 +134,11 @@
           <div class='flexContainer flexContainerButtons'>
             <button onClick="letterQuestionAnsCorrect()">Đúng</button>
             <button onClick="letterQuestionAnsWrong()">Sai</button>
+          </div>
+          <div id='questionControls flexContainer flexContainerButtons'>
+            <button onClick="s.emit('openSlam')">Mở nút Slam</button>
+            <button onClick="s.emit('solveBoard')">Giải ô chữ</button>
+            <button onClick="s.emit('timer60s')">60s</button>
           </div>
         </div>
       </div>
@@ -230,19 +229,16 @@
       <button onClick="highlightWord(7)">7</button>
       <button onClick="revealFinalWord(7)">Đ</button>
       <button onClick="hideWord(7)">S</button>
-      <button onClick="highlightWord(8)">8</button>
-      <button onClick="revealFinalWord(8)">Đ</button>
-      <button onClick="hideWord(8)">S</button>
     </div>
     <div id='finaleLetterList' style='display:none;grid-auto-flow:column;'>
-      <button onClick="chooseFinaleLetter(1)">1.</button>
-      <button onClick="chooseFinaleLetter(2)">2.</button>
-      <button onClick="chooseFinaleLetter(3)">3.</button>
-      <button onClick="chooseFinaleLetter(4)">4.</button>
-      <button onClick="chooseFinaleLetter(5)">5.</button>
-      <button onClick="chooseFinaleLetter(6)">6.</button>
-      <button onClick="chooseFinaleLetter(7)">7.</button>
-      <button onClick="chooseFinaleLetter(8)">8.</button>
+      <button onClick="chooseFinaleLetter(1)"></button>
+      <button onClick="chooseFinaleLetter(2)"></button>
+      <button onClick="chooseFinaleLetter(3)"></button>
+      <button onClick="chooseFinaleLetter(4)"></button>
+      <button onClick="chooseFinaleLetter(5)"></button>
+      <button onClick="chooseFinaleLetter(6)"></button>
+      <button onClick="chooseFinaleLetter(7)"></button>
+      <button onClick="chooseFinaleLetter(8)"></button>
     </div>
   </div>
   <div class='flexContainer'>

@@ -161,7 +161,7 @@
           tile.find('.tileText').text(letter);
           tile.find('.tileText').css('color', 'white');
           tile.find('img,.tileText').removeClass('zeroScale');
-        }, 125)
+        }, 250)
       }
       else if (state == 'Revealed') {
         tile.find('img,.tileText').addClass('zeroScale');
@@ -170,7 +170,7 @@
           tile.find('.tileText').text(letter);
           tile.find('.tileText').css('color', '#061483');
           tile.find('img,.tileText').removeClass('zeroScale');
-        }, 125)
+        }, 250)
       }
       else {
         /*tile.animate({ scale: 0 }, 125, 'linear', () => {
@@ -240,9 +240,9 @@
             })
           }, 1000)
         }
-      }, 150)
+      }, 200)
       setTimeout(() => {
-        $('.letterTile img,.tileText').css('transition', 'scale .35s ease-in-out');
+        $('.letterTile img,.tileText').css('transition', 'scale .5s ease-in-out');
       }, 5000)
     }
     function revealTile(tileCoordinate, letter, sound) {
@@ -279,7 +279,7 @@
           else {
             clearInterval(interval)
           }
-        }, 100)
+        }, 150)
       }
       else {
         indexesAndLettersToOpen.forEach((item, i) => {
@@ -291,7 +291,7 @@
           revealTile(indexesAndLettersToOpen[i].index, indexesAndLettersToOpen[i].letter, false);
         }
         $('.tile').css('opacity', 1);
-      }, 2000)
+      }, 3000)
     });
     s.on('hideWord', (indexesToHide) => {
       $('.tile').css('opacity', 1);
@@ -316,7 +316,7 @@
           }
           clearInterval(interval)
         }
-      }, 125)
+      }, 150)
     })
     s.on('highlightWord', (wordCoordinates) => {
       $('.tile').css('opacity', .2);
